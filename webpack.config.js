@@ -25,6 +25,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'assets/js/app.bundle.js',
+    publicPath: '/dist/',
   },
   mode: 'development',
   devServer: {
@@ -39,11 +40,6 @@ module.exports = {
         //? node_modules까지 변환 할 필요가 없으므로
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.s?css$/,
-      //   //? 이 순서를 지켜야한다!
-      //   use: ['style-loader', 'css-loader', 'sass-loader'],
-      // },
       {
         test: /\.css$/,
         use: ExtractTextWebpackPlugin.extract({
