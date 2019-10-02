@@ -27,7 +27,6 @@ module.exports = {
     filename: 'assets/js/app.bundle.js',
     publicPath: '/dist/',
   },
-  mode: 'development',
   devServer: {
     contentBase: __dirname + '/dist',
     port: 3000,
