@@ -1,5 +1,23 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+
+const fileOptions = {
+  css: ['app.bundle.css'],
+  js: ['app.bundle.js'],
+  chunks: {
+    head: {
+      //? entry 란 js..
+      entry: '',
+      css: 'app.bundle.css',
+    },
+    body: {
+      entry: 'app.bundle.js',
+      css: '',
+    },
+  },
+};
 
 module.exports = {
   entry: './src/assets/js/app.js',
@@ -21,10 +39,24 @@ module.exports = {
         //? node_modules까지 변환 할 필요가 없으므로
         exclude: /node_modules/,
       },
+      // {
+      //   test: /\.s?css$/,
+      //   //? 이 순서를 지켜야한다!
+      //   use: ['style-loader', 'css-loader', 'sass-loader'],
+      // },
       {
-        test: /\.s?css$/,
-        //? 이 순서를 지켜야한다!
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        test: /\.css$/,
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'postcss-loader'],
+        }),
+      },
+      {
+        test: /\.scss$/,
+        use: ExtractTextWebpackPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'sass-loader'],
+        }),
       },
       {
         test: /\.(gif|png|jpe?g|svg)$/i,
@@ -62,5 +94,22 @@ module.exports = {
       },
     ],
   },
-  plugins: [new CopyWebpackPlugin([{ from: './src/assets/images', to: './assets/images' }])],
+  plugins: [
+    new CopyWebpackPlugin([{ from: './src/assets/images', to: './assets/images' }]),
+    new CopyWebpackPlugin([{ from: './src/assets/webfonts', to: './assets/webfonts' }]),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      //! src/index.html의 html파일을 자동으로 dist폴더 밑에 index.html로 만들어준다.
+      //? 왜 dist인가? 위의 output의 path를 dist라고 지정해놓았기 떄문에
+      //* 이것이 바뀌면 path도 바뀔 것 !
+      template: 'src/index.html',
+      files: fileOptions,
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'intro.html',
+      template: 'src/intro.html',
+      files: fileOptions,
+    }),
+    new ExtractTextWebpackPlugin('assets/css/app.bundle.css'),
+  ],
 };
